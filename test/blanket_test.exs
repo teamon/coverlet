@@ -3,6 +3,9 @@ defmodule BlanketTest do
   doctest Blanket
 
   test "greets the world" do
-    assert Blanket.hello() == :world
+    Example.Ninety.one()
+    Example.Ninety.two()
+    Example.Ninety.two()
+    Example.Ninety.ninety()
   end
 end
