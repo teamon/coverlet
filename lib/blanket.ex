@@ -1,8 +1,30 @@
 defmodule Blanket do
   defmodule Lcov do
+    @moduledoc """
+
+    ## References
+    - http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
+    """
     def call(coverage) do
       IO.puts("\n\n == LCOV ==\n\n")
-      IO.puts("???")
+
+      File.mkdir_p("coverage")
+
+      File.open("coverage/lcov.info", [:write], fn io ->
+        for {file, modules} <- coverage do
+          IO.binwrite(io, "SF:#{file}\n")
+
+          for %{module: module, lines: [{n, _} | _] = lines} <- modules do
+            for {n, c} <- lines do
+              IO.binwrite(io, "DA:#{n},#{c}\n")
+            end
+
+            # IO.binwrite(io, "FN:#{n},#{module}\n")
+          end
+
+          IO.binwrite(io, "end_of_record\n")
+        end
+      end)
     end
   end
 
@@ -21,19 +43,21 @@ defmodule Blanket do
       for {file, modules} <- coverage,
           %{module: module, lines: lines} <- modules do
         n = length(lines)
-        m = Enum.count(lines, &match?([_, 0], &1))
-        c = n - m
 
-        stat = :io_lib.format("~10.. B ~10.. B ~8.2. f", [c, n, c * 100 / n])
-        IO.puts("#{stat} | #{module}  (#{file})")
+        if n > 0 do
+          m = Enum.count(lines, &match?([_, 0], &1))
+          c = n - m
+          stat = :io_lib.format("~10.. B ~10.. B ~8.2. f", [c, n, c * 100 / n])
+          IO.puts("#{stat} | #{module}  (#{file})")
+        end
       end
     end
   end
 
   @reporters [
-    Lcov,
-    Json,
-    Console
+    Lcov
+    # Json,
+    # Console
   ]
 
   def start(compile_path, opts) do
@@ -69,7 +93,7 @@ defmodule Blanket do
 
       coverage = %{
         module: module,
-        lines: for({{_, n}, c} when n > 0 <- analysis, do: [n, c])
+        lines: lines(analysis)
       }
 
       case files[path] do
@@ -77,5 +101,16 @@ defmodule Blanket do
         list -> Map.put(files, path, [coverage | list])
       end
     end)
+  end
+
+  defp lines(analysis) do
+    analysis
+    |> Enum.reduce([], fn
+      {{_, n}, _}, xs when n <= 0 -> xs
+      {{_, n}, c}, [{n, p} | xs] when c > p -> [{n, c} | xs]
+      {{_, n}, _}, [{n, p} | xs] -> [{n, p} | xs]
+      {{_, n}, c}, xs -> [{n, c} | xs]
+    end)
+    |> Enum.reverse()
   end
 end
