@@ -63,47 +63,44 @@ defmodule Blanket do
       File.mkdir_p("cover")
 
       File.open("cover/cover.html", [:write], fn io ->
-        # IO.binwrite(io, generate(coverage))
-        IO.binwrite(io, render_index(coverage))
+        IO.binwrite(io, render_index(merge(coverage)))
       end)
     end
 
-    defp lines(file, modules) do
-      lines = Enum.reduce(modules, [], fn e,a -> a ++ e.lines end)
+    defp merge(coverage) do
+      for {file, modules} <- coverage do
+        lines = Enum.reduce(modules, %{}, fn %{lines: lines}, acc ->
+          Map.merge(acc, Enum.into(lines, %{}), fn _k, x, y -> x + y end)
+        end)
+        {file, lines}
+      end
+    end
 
+    defp lines(file, lines) do
       file
       |> File.stream!()
       |> Enum.with_index(1)
-      |> Enum.reduce({[], lines}, fn
-        {content, n}, {acc, [{n,hits}|rest]} -> {[{hits,trim(content)}|acc], rest}
-        {content, n}, {acc, rest} -> {[{nil, trim(content)}|acc], rest}
-      end)
-      |> elem(0)
+      |> Enum.reduce([], fn {content, n}, acc -> [{lines[n], content} | acc] end)
       |> Enum.reverse()
     end
-
-    defp trim(content), do: String.trim_trailing(content, "\n")
 
     defp line_class(nil), do: "ignore"
     defp line_class(0), do: "miss"
     defp line_class(_), do: "hit"
 
     defp summary(coverage) do
+      IO.inspect coverage
       coverage
-      |> Enum.map(fn {file, modules} -> {file, percentage(modules)} end)
+      |> Enum.map(fn {file, lines} -> {file, percentage(lines)} end)
       |> Enum.sort_by(fn {file, perc} -> perc end)
     end
 
-    defp percentage(modules) do
-      {r,c} = Enum.reduce(modules, {0,0}, fn %{module: module, lines: lines}, {ar, ac} ->
-        r = length(lines)
-        m = Enum.count(lines, &match?({_, 0}, &1))
-        c = r - m
-        {ar + r, ac + c}
-      end)
+    defp percentage(lines) do
+      r = map_size(lines)
 
       if r > 0 do
-        c*100/r
+        m = Enum.count(lines, &match?({_, 0}, &1))
+        (r - m) * 100 / r
       else
         0.0
       end
