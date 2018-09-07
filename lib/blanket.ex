@@ -8,9 +8,9 @@ defmodule Blanket do
     def call(coverage) do
       IO.puts("\n\n == LCOV ==\n\n")
 
-      File.mkdir_p("coverage")
+      File.mkdir_p("cover")
 
-      File.open("coverage/lcov.info", [:write], fn io ->
+      File.open("cover/lcov.info", [:write], fn io ->
         for {file, modules} <- coverage do
           IO.binwrite(io, "SF:#{file}\n")
 
@@ -45,7 +45,7 @@ defmodule Blanket do
         n = length(lines)
 
         if n > 0 do
-          m = Enum.count(lines, &match?([_, 0], &1))
+          m = Enum.count(lines, &match?({_, 0}, &1))
           c = n - m
           stat = :io_lib.format("~10.. B ~10.. B ~8.2. f", [c, n, c * 100 / n])
           IO.puts("#{stat} | #{module}  (#{file})")
@@ -54,10 +54,69 @@ defmodule Blanket do
     end
   end
 
+  defmodule HTML do
+    require EEx
+    dir = Path.join(__DIR__, "blanket/templates")
+    EEx.function_from_file :defp, :render_index, Path.join(dir, "index.html.eex"), [:coverage]
+
+    def call(coverage) do
+      File.mkdir_p("cover")
+
+      File.open("cover/cover.html", [:write], fn io ->
+        # IO.binwrite(io, generate(coverage))
+        IO.binwrite(io, render_index(coverage))
+      end)
+    end
+
+    defp lines(file, modules) do
+      lines = Enum.reduce(modules, [], fn e,a -> a ++ e.lines end)
+
+      file
+      |> File.stream!()
+      |> Enum.with_index(1)
+      |> Enum.reduce({[], lines}, fn
+        {content, n}, {acc, [{n,hits}|rest]} -> {[{hits,trim(content)}|acc], rest}
+        {content, n}, {acc, rest} -> {[{nil, trim(content)}|acc], rest}
+      end)
+      |> elem(0)
+      |> Enum.reverse()
+    end
+
+    defp trim(content), do: String.trim_trailing(content, "\n")
+
+    defp line_class(nil), do: "ignore"
+    defp line_class(0), do: "miss"
+    defp line_class(_), do: "hit"
+
+    defp summary(coverage) do
+      coverage
+      |> Enum.map(fn {file, modules} -> {file, percentage(modules)} end)
+      |> Enum.sort_by(fn {file, perc} -> perc end)
+    end
+
+    defp percentage(modules) do
+      {r,c} = Enum.reduce(modules, {0,0}, fn %{module: module, lines: lines}, {ar, ac} ->
+        r = length(lines)
+        m = Enum.count(lines, &match?({_, 0}, &1))
+        c = r - m
+        {ar + r, ac + c}
+      end)
+
+      if r > 0 do
+        c*100/r
+      else
+        0.0
+      end
+    end
+
+    defp format_percentage(perc), do: :io_lib.format("~8.2. f", [perc])
+  end
+
   @reporters [
-    Lcov
+    # Lcov,
     # Json,
-    # Console
+    Console,
+    HTML
   ]
 
   def start(compile_path, opts) do
