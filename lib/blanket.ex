@@ -25,7 +25,7 @@ defmodule Blanket do
 
     Enum.reduce(:cover.modules(), %{}, fn module, files ->
       source = module.module_info(:compile)[:source]
-      path = :lists.nthtail(cwdlen, source)
+      path = to_string(:lists.nthtail(cwdlen, source))
       {:ok, analysis} = :cover.analyse(module, :calls, :line)
 
       coverage = %{

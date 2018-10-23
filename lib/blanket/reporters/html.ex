@@ -35,8 +35,6 @@ defmodule Blanket.Reporters.HTML do
   defp line_class(_), do: "hit"
 
   defp summary(coverage) do
-    IO.inspect(coverage)
-
     coverage
     |> Enum.map(fn {file, lines} -> {file, percentage(lines)} end)
     |> Enum.sort_by(fn {_, perc} -> perc end)
