@@ -1,6 +1,5 @@
 defmodule BlanketTest do
   use ExUnit.Case
-  doctest Blanket
 
   test "greets the world" do
     Example.Ninety.one()

@@ -4,8 +4,7 @@
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `blanket` to your list of dependencies in `mix.exs`:
+Add `blanket` to your list of dependencies and set it as `test_coverage` tool in `mix.exs`:
 
 ```elixir
 defmodule MyApp.MixProject do
@@ -24,6 +23,14 @@ defmodule MyApp.MixProject do
     ]
   end
 end
+```
+
+## Developing this library itself
+
+Use `BLANKET_ENDPOINT` to point the reporter to localhost.
+
+```
+BLANKET_ENDPOINT=http://localhost:4000 BLANKET_TOKEN=xyz mix test --cover
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)

@@ -1,4 +1,17 @@
 defmodule Blanket do
+  @app :blanket
+  @version Mix.Project.get().project[:version]
+  @default_endpoint "https://todo-example.com"
+
+  ## CONFIG
+
+  def version, do: @version
+  def token, do: get_config(:token, "BLANKET_TOKEN") || raise("Missing token")
+  def endpoint, do: get_config(:endpoint, "BLANKET_ENDPOINT") || @default_endpoint
+  defp get_config(key, env), do: Application.get_env(@app, key) || System.get_env(env)
+
+  ## COVERAGE TOOL IMPLEMENTATION
+
   def start(compile_path, opts) do
     Mix.shell().info("BLANKET compile_path: #{inspect(compile_path)}")
     Mix.shell().info("BLANKET opts:: #{inspect(opts)}")
@@ -12,9 +25,7 @@ defmodule Blanket do
 
     fn ->
       Mix.shell().info("\nBLANKET Generating cover results ...\n")
-
       coverage = generate_coverage()
-
       report(coverage)
     end
   end

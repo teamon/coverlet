@@ -27,26 +27,32 @@ defmodule Blanket.Reporters.Remote do
           }
         }
 
-  @version Mix.Project.get().project[:version]
-
   def call(coverage) do
+    Application.ensure_all_started(:inets) |> IO.inspect()
+
     snapshot = %{
       source: %{
-        version: @version
+        version: Blanket.version()
       },
       commit: commit(),
       files: coverage
     }
 
-    IO.inspect(snapshot)
+    # IO.inspect(snapshot)
 
     payload = :erlang.term_to_binary(snapshot)
 
-    url = 'http://localhost:4000/api/v1/snapshots'
-    headers = [{'user-agent', 'blanket-elixir'}]
+    url = '#{Blanket.endpoint()}/api/v1/snapshots'
 
-    :httpc.request(:post, {url, headers, 'application/vnd.blanket+erlang', payload}, [], [])
-    |> IO.inspect()
+    headers = [
+      {'user-agent', 'blanket-elixir #{Blanket.version()}'},
+      {'authorization', '#{Blanket.token()}'}
+    ]
+
+    {:ok, response} =
+      :httpc.request(:post, {url, headers, 'application/vnd.blanket+erlang', payload}, [], [])
+
+    IO.inspect(response)
   end
 
   defp commit do
