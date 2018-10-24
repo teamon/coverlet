@@ -20,7 +20,5 @@ defmodule Blanket.MixProject do
     [extra_applications: [:logger]]
   end
 
-  defp deps do
-    [{:jason, "~> 1.0"}]
-  end
+  defp deps, do: []
 end
