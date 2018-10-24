@@ -20,5 +20,11 @@ defmodule Blanket.MixProject do
     [extra_applications: [:logger]]
   end
 
-  defp deps, do: []
+  defp deps do
+    [
+      # Test dependencies
+      {:bypass, "~> 0.8", only: :test},
+      {:plug_cowboy, "~> 1.0", only: :test}
+    ]
+  end
 end

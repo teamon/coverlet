@@ -1,4 +1,6 @@
 defmodule Blanket.Reporters.Remote do
+  require Logger
+
   @type snapshot :: %{
           commit: %{
             sha: binary,
@@ -28,31 +30,47 @@ defmodule Blanket.Reporters.Remote do
         }
 
   def call(coverage) do
-    Application.ensure_all_started(:inets) |> IO.inspect()
+    case Blanket.token() do
+      :unset -> IO.puts("Missing BLANKET_TOKEN, not sending")
+      token -> report(coverage, token, Blanket.endpoint(), Blanket.version())
+    end
+  end
+
+  def report(coverage, token, endpoint, version) do
+    {:ok, _} = Application.ensure_all_started(:inets)
 
     snapshot = %{
       source: %{
-        version: Blanket.version()
+        version: version
       },
       commit: commit(),
       files: coverage
     }
 
-    # IO.inspect(snapshot)
-
     payload = :erlang.term_to_binary(snapshot)
 
-    url = '#{Blanket.endpoint()}/api/v1/snapshots'
+    url = '#{endpoint}/api/v1/snapshots'
 
     headers = [
-      {'user-agent', 'blanket-elixir #{Blanket.version()}'},
-      {'authorization', '#{Blanket.token()}'}
+      {'user-agent', 'blanket-elixir #{version}'},
+      {'authorization', '#{token}'}
     ]
 
-    {:ok, response} =
-      :httpc.request(:post, {url, headers, 'application/vnd.blanket+erlang', payload}, [], [])
+    case :httpc.request(:post, {url, headers, 'application/vnd.blanket+erlang', payload}, [], []) do
+      {:ok, {{_, 201, _}, _headers, _body}} ->
+        Logger.info("Code coverage report successfully sent to Blanket")
+        :ok
 
-    IO.inspect(response)
+      {:ok, {{_, 401, _}, _headers, _body}} ->
+        Logger.error("Error sending raport to Blanket - The token is invalid")
+        Logger.error("Check the value of BLANKET_TOKEN and try again")
+        System.halt(1)
+
+      error ->
+        Logger.error("Error sending raport to Blanket")
+        Logger.error(inspect(error))
+        System.halt(2)
+    end
   end
 
   defp commit do

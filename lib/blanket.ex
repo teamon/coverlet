@@ -6,7 +6,7 @@ defmodule Blanket do
   ## CONFIG
 
   def version, do: @version
-  def token, do: get_config(:token, "BLANKET_TOKEN") || raise("Missing token")
+  def token, do: get_config(:token, "BLANKET_TOKEN") || :unset
   def endpoint, do: get_config(:endpoint, "BLANKET_ENDPOINT") || @default_endpoint
   defp get_config(key, env), do: Application.get_env(@app, key) || System.get_env(env)
 
