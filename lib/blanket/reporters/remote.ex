@@ -6,11 +6,12 @@ defmodule Blanket.Reporters.Remote do
             sha: binary,
             message: binary,
             branch: binary,
-            date: binary,
             author_email: binary,
             author_name: binary,
-            commiter_email: binary,
-            comitter_name: binary
+            author_date: binary,
+            committer_email: binary,
+            committer_name: binary,
+            committer_date: binary
           },
           source: %{
             version: binary
@@ -82,9 +83,14 @@ defmodule Blanket.Reporters.Remote do
     |> Enum.reduce(%{}, &parse/2)
   end
 
-  defp parse("author_name " <> name, info), do: Map.put(info, :author_name, name)
-  defp parse("author_email " <> email, info), do: Map.put(info, :author_email, email)
   defp parse("sha " <> sha, info), do: Map.put(info, :sha, sha)
+  defp parse("message " <> message, info), do: Map.put(info, :message, message)
   defp parse("branch " <> branch, info), do: Map.put(info, :branch, branch)
+  defp parse("author_email " <> email, info), do: Map.put(info, :email, email)
+  defp parse("author_name " <> name, info), do: Map.put(info, :name, name)
+  defp parse("author_date " <> date, info), do: Map.put(info, :date, date)
+  defp parse("committer_email " <> email, info), do: Map.put(info, :email, email)
+  defp parse("committer_name " <> name, info), do: Map.put(info, :name, name)
+  defp parse("committer_date " <> date, info), do: Map.put(info, :date, date)
   defp parse("", info), do: info
 end
