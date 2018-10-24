@@ -22,6 +22,29 @@ defmodule BlanketTest do
 
     test "send report when given BLANKET_TOKEN", %{bypass: bypass} do
       Bypass.expect_once(bypass, "POST", "/api/v1/snapshots", fn conn ->
+        # validate content-type header
+        assert ["application/vnd.blanket+erlang"] = Plug.Conn.get_req_header(conn, "content-type")
+
+        # validate payload
+        {:ok, body, conn} = Plug.Conn.read_body(conn)
+        payload = :erlang.binary_to_term(body)
+
+        # validate files snapshot
+        files = payload[:files]
+        assert map_size(files) == 1
+        assert [_, _] = example = files["lib/example.ex"]
+
+        # Example.Sad
+        sad = Enum.find(example, &(&1.module == Example.Sad))
+        assert sad[:module] == Example.Sad
+        assert sad[:lines] == [{21, 0}, {22, 0}]
+
+        # Example.Ninety
+        ninety = Enum.find(example, &(&1.module == Example.Ninety))
+        assert ninety[:module] == Example.Ninety
+        assert ninety[:lines] == [{3, 2}, {7, 3}, {11, 0}, {15, 1}]
+
+        # send "Created" response
         Plug.Conn.resp(conn, 201, "")
       end)
 
