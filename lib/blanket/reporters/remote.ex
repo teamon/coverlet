@@ -19,15 +19,12 @@ defmodule Blanket.Reporters.Remote do
           github: %{
             pr: binary
           },
-          files: %{
-            binary => [
-              %{
-                content: binary,
-                module: module,
-                lines: [{non_neg_integer, non_neg_integer}]
-              }
-            ]
-          }
+          files: [
+            %{
+              path: binary,
+              lines: [{non_neg_integer, non_neg_integer}]
+            }
+          ]
         }
 
   def call(coverage) do

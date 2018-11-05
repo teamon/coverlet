@@ -38,17 +38,14 @@ defmodule Blanket do
       source = module.module_info(:compile)[:source]
       path = to_string(:lists.nthtail(cwdlen, source))
       {:ok, analysis} = :cover.analyse(module, :calls, :line)
-
-      coverage = %{
-        module: module,
-        lines: lines(analysis)
-      }
+      lines = lines(analysis)
 
       case files[path] do
-        nil -> Map.put(files, path, [coverage])
-        list -> Map.put(files, path, [coverage | list])
+        nil -> Map.put(files, path, lines)
+        list -> Map.put(files, path, list ++ lines)
       end
     end)
+    |> Enum.map(fn {path, lines} -> %{path: path, lines: lines} end)
   end
 
   defp lines(analysis) do

@@ -30,19 +30,12 @@ defmodule BlanketTest do
         payload = :erlang.binary_to_term(body)
 
         # validate files snapshot
-        files = payload[:files]
-        assert map_size(files) == 1
-        assert [_, _] = example = files["lib/example.ex"]
-
-        # Example.Sad
-        sad = Enum.find(example, &(&1.module == Example.Sad))
-        assert sad[:module] == Example.Sad
-        assert sad[:lines] == [{21, 0}, {22, 0}]
-
-        # Example.Ninety
-        ninety = Enum.find(example, &(&1.module == Example.Ninety))
-        assert ninety[:module] == Example.Ninety
-        assert ninety[:lines] == [{3, 2}, {7, 3}, {11, 0}, {15, 1}]
+        assert payload[:files] == [
+                 %{
+                   path: "lib/example.ex",
+                   lines: [{3, 2}, {7, 3}, {11, 0}, {15, 1}, {21, 0}, {22, 0}]
+                 }
+               ]
 
         # send "Created" response
         Plug.Conn.resp(conn, 201, "")

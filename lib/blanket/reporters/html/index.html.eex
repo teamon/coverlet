@@ -56,11 +56,11 @@
 
     <div class="files">
       <h3>Files</h3>
-      <%= for {file, modules} <- coverage do %>
-        <section id="file-<%= file %>">
-          <h4><a href="#file-<%= file %>"><%= file %></a></h4>
+      <%= for %{path: path, lines: lines} <- coverage do %>
+        <section id="file-<%= path %>">
+          <h4><a href="#file-<%= path %>"><%= path %></a></h4>
           <table class="file">
-            <%= for {hits, content} <- lines(file, modules) do %>
+            <%= for {content, hits} <- lines_with_hits(path, lines) do %>
               <tr class="<%= line_class(hits) %>">
                 <td class="gutter"><%= hits %></td>
                 <td class="content"><%= content %></td>

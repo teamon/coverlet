@@ -7,27 +7,20 @@ defmodule Blanket.Reporters.HTML do
     File.mkdir_p("cover")
 
     File.open("cover/cover.html", [:write], fn io ->
-      IO.binwrite(io, render_index(merge(coverage)))
+      IO.binwrite(io, render_index(coverage))
     end)
   end
 
-  defp merge(coverage) do
-    for {file, modules} <- coverage do
-      lines =
-        Enum.reduce(modules, %{}, fn %{lines: lines}, acc ->
-          Map.merge(acc, Enum.into(lines, %{}), fn _k, x, y -> x + y end)
-        end)
-
-      {file, lines}
-    end
-  end
-
-  defp lines(file, lines) do
-    file
+  defp lines_with_hits(path, lines) do
+    path
     |> File.stream!()
     |> Enum.with_index(1)
-    |> Enum.reduce([], fn {content, n}, acc -> [{lines[n], content} | acc] end)
-    |> Enum.reverse()
+    |> Enum.map(fn {content, n} ->
+      case List.keyfind(lines, n, 0) do
+        {_, hits} -> {content, hits}
+        nil -> {content, nil}
+      end
+    end)
   end
 
   defp line_class(nil), do: "ignore"
@@ -36,12 +29,12 @@ defmodule Blanket.Reporters.HTML do
 
   defp summary(coverage) do
     coverage
-    |> Enum.map(fn {file, lines} -> {file, percentage(lines)} end)
+    |> Enum.map(fn %{path: path, lines: lines} -> {path, percentage(lines)} end)
     |> Enum.sort_by(fn {_, perc} -> perc end)
   end
 
   defp percentage(lines) do
-    r = map_size(lines)
+    r = length(lines)
 
     if r > 0 do
       m = Enum.count(lines, &match?({_, 0}, &1))
