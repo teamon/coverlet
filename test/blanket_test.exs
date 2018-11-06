@@ -21,7 +21,7 @@ defmodule BlanketTest do
     end
 
     test "send report when given BLANKET_TOKEN", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "POST", "/api/v1/snapshots", fn conn ->
+      Bypass.expect_once(bypass, "POST", "/api/v0/snapshots", fn conn ->
         # validate content-type header
         assert ["application/vnd.blanket+erlang"] = Plug.Conn.get_req_header(conn, "content-type")
 
@@ -51,7 +51,7 @@ defmodule BlanketTest do
     end
 
     test "handle invalid token error", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "POST", "/api/v1/snapshots", fn conn ->
+      Bypass.expect_once(bypass, "POST", "/api/v0/snapshots", fn conn ->
         Plug.Conn.resp(conn, 401, "Invalid token")
       end)
 
@@ -65,7 +65,7 @@ defmodule BlanketTest do
     end
 
     test "handle other error", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "POST", "/api/v1/snapshots", fn conn ->
+      Bypass.expect_once(bypass, "POST", "/api/v0/snapshots", fn conn ->
         Plug.Conn.resp(conn, 404, "Not found")
       end)
 

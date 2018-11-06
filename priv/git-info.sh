@@ -12,9 +12,10 @@ branch=${branch#tags/}
 
 echo "author_email ${author_email}"
 echo "author_name ${author_name}"
-echo "author_date ${author_name}"
+echo "author_date ${author_date}"
 echo "committer_email ${committer_email}"
 echo "committer_name ${committer_name}"
 echo "committer_date ${committer_date}"
+echo "message ${message}"
 echo "sha ${sha}"
 echo "branch ${branch}"

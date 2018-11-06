@@ -38,7 +38,8 @@ defmodule Blanket.Reporters.Remote do
     {:ok, _} = Application.ensure_all_started(:inets)
 
     snapshot = %{
-      source: %{
+      reporter: %{
+        name: "blanket-elixir",
         version: version
       },
       commit: commit(),
@@ -47,7 +48,7 @@ defmodule Blanket.Reporters.Remote do
 
     payload = :erlang.term_to_binary(snapshot)
 
-    url = '#{endpoint}/api/v1/snapshots'
+    url = '#{endpoint}/api/v0/snapshots'
 
     headers = [
       {'user-agent', 'blanket-elixir #{version}'},
@@ -62,11 +63,13 @@ defmodule Blanket.Reporters.Remote do
       {:ok, {{_, 401, _}, _headers, _body}} ->
         Logger.error("Error sending raport to Blanket - The token is invalid")
         Logger.error("Check the value of BLANKET_TOKEN and try again")
+        Logger.flush()
         System.halt(1)
 
       error ->
         Logger.error("Error sending raport to Blanket")
         Logger.error(inspect(error))
+        Logger.flush()
         System.halt(2)
     end
   end
@@ -83,11 +86,11 @@ defmodule Blanket.Reporters.Remote do
   defp parse("sha " <> sha, info), do: Map.put(info, :sha, sha)
   defp parse("message " <> message, info), do: Map.put(info, :message, message)
   defp parse("branch " <> branch, info), do: Map.put(info, :branch, branch)
-  defp parse("author_email " <> email, info), do: Map.put(info, :email, email)
-  defp parse("author_name " <> name, info), do: Map.put(info, :name, name)
-  defp parse("author_date " <> date, info), do: Map.put(info, :date, date)
-  defp parse("committer_email " <> email, info), do: Map.put(info, :email, email)
-  defp parse("committer_name " <> name, info), do: Map.put(info, :name, name)
-  defp parse("committer_date " <> date, info), do: Map.put(info, :date, date)
+  defp parse("author_email " <> email, info), do: Map.put(info, :author_email, email)
+  defp parse("author_name " <> name, info), do: Map.put(info, :author_name, name)
+  defp parse("author_date " <> date, info), do: Map.put(info, :author_date, date)
+  defp parse("committer_email " <> email, info), do: Map.put(info, :committer_email, email)
+  defp parse("committer_name " <> name, info), do: Map.put(info, :committer_name, name)
+  defp parse("committer_date " <> date, info), do: Map.put(info, :committer_date, date)
   defp parse("", info), do: info
 end
