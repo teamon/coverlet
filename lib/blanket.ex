@@ -62,7 +62,8 @@ defmodule Blanket do
   defp report(coverage) do
     reporters = [
       Blanket.Reporters.HTML,
-      Blanket.Reporters.Remote
+      Blanket.Reporters.Remote,
+      Blanket.Reporters.Console
     ]
 
     for reporter <- reporters do

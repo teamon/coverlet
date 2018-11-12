@@ -4,11 +4,14 @@ defmodule Blanket.Reporters.HTML do
   EEx.function_from_file(:defp, :render_index, Path.join(dir, "index.html.eex"), [:coverage])
 
   def call(coverage) do
-    File.mkdir_p("cover")
+    dir = "cover"
+    File.mkdir_p(dir)
 
     File.open("cover/cover.html", [:write], fn io ->
       IO.binwrite(io, render_index(coverage))
     end)
+
+    IO.puts "Coverage reporte generated into #{dir} directory"
   end
 
   defp lines_with_hits(path, lines) do

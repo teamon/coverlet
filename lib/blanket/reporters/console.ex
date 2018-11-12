@@ -1,18 +1,28 @@
 defmodule Blanket.Reporters.Console do
   def call(coverage) do
-    IO.puts("   Covered   Relevant        % | Module  (File)")
-    IO.puts("--------------------------------------------------------------")
+    IO.puts "Percentage | File"
+    IO.puts "-----------|--------------------------"
 
-    for {file, modules} <- coverage,
-        %{module: module, lines: lines} <- modules do
-      n = length(lines)
+    for {path, percentage} <- summary(coverage) do
+      IO.puts :io_lib.format("~10.2. f | ~s", [percentage, path])
+    end
+  end
 
-      if n > 0 do
-        m = Enum.count(lines, &match?({_, 0}, &1))
-        c = n - m
-        stat = :io_lib.format("~10.. B ~10.. B ~8.2. f", [c, n, c * 100 / n])
-        IO.puts("#{stat} | #{module}  (#{file})")
-      end
+  defp summary(coverage) do
+    coverage
+    |> Enum.map(fn %{path: path, lines: lines} -> {path, percentage(lines)} end)
+    |> Enum.filter(fn {_, perc} -> perc end)
+    |> Enum.sort_by(fn {_, perc} -> -perc end)
+  end
+
+  defp percentage(lines) do
+    r = length(lines)
+
+    if r > 0 do
+      m = Enum.count(lines, &match?({_, 0}, &1))
+      (r - m) * 100 / r
+    else
+      nil
     end
   end
 end
