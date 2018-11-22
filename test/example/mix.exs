@@ -5,7 +5,7 @@ defmodule Example.MixProject do
     [
       app: :example,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: Blanket]
