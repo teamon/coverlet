@@ -27,12 +27,6 @@ end
 
 ## Developing this library itself
 
-Use `BLANKET_ENDPOINT` to point the reporter to localhost.
-
-```
-BLANKET_ENDPOINT=http://localhost:4000 BLANKET_TOKEN=xyz mix test --cover
-```
-
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/blanket](https://hexdocs.pm/blanket).

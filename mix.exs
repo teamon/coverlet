@@ -17,14 +17,10 @@ defmodule Blanket.MixProject do
   defp elixirc_paths(_), do: ["lib"]
 
   def application do
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :tools, :eex]]
   end
 
   defp deps do
-    [
-      # Test dependencies
-      {:bypass, "~> 0.8", only: :test},
-      {:plug_cowboy, "~> 1.0", only: :test}
-    ]
+    []
   end
 end

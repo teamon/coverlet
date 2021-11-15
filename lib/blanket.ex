@@ -1,14 +1,9 @@
 defmodule Blanket do
-  @app :blanket
   @version Mix.Project.get().project[:version]
-  @default_endpoint "https://todo-example.com"
 
   ## CONFIG
 
   def version, do: @version
-  def token, do: get_config(:token, "BLANKET_TOKEN") || :unset
-  def endpoint, do: get_config(:endpoint, "BLANKET_ENDPOINT") || @default_endpoint
-  defp get_config(key, env), do: Application.get_env(@app, key) || System.get_env(env)
 
   ## COVERAGE TOOL IMPLEMENTATION
 
@@ -62,7 +57,6 @@ defmodule Blanket do
   defp report(coverage) do
     reporters = [
       Blanket.Reporters.HTML,
-      Blanket.Reporters.Remote,
       Blanket.Reporters.Console
     ]
 
