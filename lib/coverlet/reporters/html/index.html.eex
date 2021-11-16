@@ -58,21 +58,21 @@
         width: 800px;
         padding-left: 10px;
       }
-      .miss { background-color: #ffeef0; }
-      .hit { background-color: #e6ffed; }
       .ignore { color: #555; }
+      .miss { background-color: #FF413633; }
+      .hit { background-color: #2ECC4033; }
 
-      .p0 { background-color: #FFEEF0; }
-      .p1 { background-color: #FDF0F0; }
-      .p2 { background-color: #FAF1EF; }
-      .p3 { background-color: #F8F3EF; }
-      .p4 { background-color: #F5F5EF; }
-      .p5 { background-color: #F3F7EF; }
-      .p6 { background-color: #F0F8EE; }
-      .p7 { background-color: #EEFAEE; }
-      .p8 { background-color: #EBFCEE; }
-      .p9 { background-color: #E9FDED; }
-      .p10 { background-color: #E6FFED; }
+      .p0 { background-color: #FF413633; }
+      .p1 { background-color: #EA4F3733; }
+      .p2 { background-color: #D55D3833; }
+      .p3 { background-color: #C06B3933; }
+      .p4 { background-color: #AB793A33; }
+      .p5 { background-color: #97873B33; }
+      .p6 { background-color: #82943C33; }
+      .p7 { background-color: #6DA23D33; }
+      .p8 { background-color: #58B03E33; }
+      .p9 { background-color: #43BE3F33; }
+      .p10 { background-color: #2ECC4033; }
 
       .summary-list, .summary-tree { max-width: 600px; }
 
