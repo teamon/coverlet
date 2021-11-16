@@ -1,10 +1,10 @@
-# Blanket
+# Coverlet
 
-**TODO: Add description**
+Code coverage raport generator.
 
 ## Installation
 
-Add `blanket` to your list of dependencies and set it as `test_coverage` tool in `mix.exs`:
+Add `coverlet` to your list of dependencies and set it as `test_coverage` tool in `mix.exs`:
 
 ```elixir
 defmodule MyApp.MixProject do
@@ -13,13 +13,13 @@ defmodule MyApp.MixProject do
   def project do
     [
       # ...
-      test_coverage: [tool: Blanket]
+      test_coverage: [tool: Coverlet]
     ]
   end
 
   def deps do
     [
-      {:blanket, "~> 0.1.0", only: [:test]}
+      {:coverlet, "~> 0.1.0", only: [:test]}
     ]
   end
 end
@@ -29,4 +29,4 @@ end
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/blanket](https://hexdocs.pm/blanket).
+be found at [https://hexdocs.pm/coverlet](https://hexdocs.pm/coverlet).

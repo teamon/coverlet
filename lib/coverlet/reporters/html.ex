@@ -1,4 +1,4 @@
-defmodule Blanket.Reporters.HTML do
+defmodule Coverlet.Reporters.HTML do
   require EEx
   dir = Path.join(__DIR__, "html")
   EEx.function_from_file(:defp, :render_index, Path.join(dir, "index.html.eex"), [:coverage])

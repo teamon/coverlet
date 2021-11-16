@@ -1,4 +1,4 @@
-defmodule BlanketTest do
+defmodule CoverletTest do
   use ExUnit.Case
 
   @appdir "test/example"

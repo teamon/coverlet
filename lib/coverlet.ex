@@ -1,4 +1,4 @@
-defmodule Blanket do
+defmodule Coverlet do
   @version Mix.Project.get().project[:version]
 
   def version, do: @version
@@ -12,7 +12,7 @@ defmodule Blanket do
     end
 
     fn ->
-      Mix.shell().info("\nBLANKET Generating cover results ...\n")
+      Mix.shell().info("\nGenerating cover results ...\n")
       coverage = generate_coverage()
       report(coverage)
     end
@@ -49,9 +49,9 @@ defmodule Blanket do
 
   defp report(coverage) do
     reporters = [
-      Blanket.Reporters.HTML,
-      Blanket.Reporters.LCOV,
-      Blanket.Reporters.Console
+      Coverlet.Reporters.HTML,
+      Coverlet.Reporters.LCOV,
+      Coverlet.Reporters.Console
     ]
 
     for reporter <- reporters do

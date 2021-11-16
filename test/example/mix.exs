@@ -8,7 +8,7 @@ defmodule Example.MixProject do
       elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: Blanket]
+      test_coverage: [tool: Coverlet]
     ]
   end
 
@@ -17,6 +17,6 @@ defmodule Example.MixProject do
   end
 
   defp deps do
-    [{:blanket, path: "../..", only: [:dev, :test]}]
+    [{:coverlet, path: "../..", only: [:dev, :test]}]
   end
 end

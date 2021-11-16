@@ -1,15 +1,15 @@
-defmodule Blanket.MixProject do
+defmodule Coverlet.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :blanket,
+      app: :coverlet,
       version: "0.1.0",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: Blanket]
+      test_coverage: [tool: Coverlet]
     ]
   end
 

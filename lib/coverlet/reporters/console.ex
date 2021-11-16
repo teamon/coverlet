@@ -1,10 +1,10 @@
-defmodule Blanket.Reporters.Console do
+defmodule Coverlet.Reporters.Console do
   def call(coverage) do
-    IO.puts "Percentage | File"
-    IO.puts "-----------|--------------------------"
+    IO.puts("Percentage | File")
+    IO.puts("-----------|--------------------------")
 
     for {path, percentage} <- summary(coverage) do
-      IO.puts :io_lib.format("~10.2. f | ~s", [percentage, path])
+      IO.puts(:io_lib.format("~10.2. f | ~s", [percentage, path]))
     end
   end
 
