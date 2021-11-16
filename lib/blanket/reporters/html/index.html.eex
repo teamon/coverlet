@@ -5,10 +5,30 @@
     <title>Blanket Coverage Report</title>
     <style media="screen">
       body {
-        padding: 20px;
+        padding: 0 20px;
+        margin: 0;
         font-family: Monaco, monospace;
         font-size: 12px;
       }
+
+      a, a:visited { color: #0000ee; }
+
+      nav {
+        position: fixed;
+        top: 15px;
+        left: 20px;
+        height: calc(100vh - 20px);
+        width: 480px;
+        padding-right: 20px;
+        border-right: 1px solid #ddd;
+        overflow: scroll;
+        background: #fff;
+      }
+
+      main {
+        padding-left: 520px;
+      }
+
       section {
         padding-bottom: 20px;
       }
@@ -25,10 +45,13 @@
       .file td {
         white-space: pre;
       }
+      .file .gutter {
+        opacity: 0.5;
+      }
       .gutter {
         text-align: right;
         border-right: 1px solid #ddd;
-        width: 20px;
+        width: 50px;
         padding-right: 10px;
       }
       .content {
@@ -38,36 +61,107 @@
       .miss { background-color: #ffeef0; }
       .hit { background-color: #e6ffed; }
       .ignore { color: #555; }
+
+      .p0 { background-color: #FFEEF0; }
+      .p1 { background-color: #FDF0F0; }
+      .p2 { background-color: #FAF1EF; }
+      .p3 { background-color: #F8F3EF; }
+      .p4 { background-color: #F5F5EF; }
+      .p5 { background-color: #F3F7EF; }
+      .p6 { background-color: #F0F8EE; }
+      .p7 { background-color: #EEFAEE; }
+      .p8 { background-color: #EBFCEE; }
+      .p9 { background-color: #E9FDED; }
+      .p10 { background-color: #E6FFED; }
+
+      .summary-list, .summary-tree { max-width: 600px; }
+
+      .summary-tree ul {
+        list-style-type: none;
+        margin-left: 10px;
+        padding-left: 10px;
+      }
+      .summary-tree > ul {
+        margin-left: 0;
+        padding-left: 0;
+      }
+      .summary-tree .gutter {
+        margin-right: 10px;
+      }
+      .summary-tree .caret {
+        cursor: pointer;
+      }
+      .caret::before {
+        content: "\25B6";
+        color: black;
+        display: inline-block;
+        margin-right: 6px;
+      }
+      .summary-tree a {
+        margin-left: 13px;
+      }
+      .down .caret::before {
+        transform: rotate(90deg);
+      }
+      .summary-tree ul.closed {
+        display: none;
+      }
+      .summary-tree > ul.closed {
+        display: block;
+      }
+      .summary-tree .f {
+        display: flex;
+        margin: 1px 0;
+        padding: 1px 0;
+      }
+
     </style>
+    <script type="text/javascript">
+      function toggle(el){
+        el.classList.toggle("down");
+        el.nextSibling.classList.toggle("closed");
+      }
+    </script>
   </head>
   <body>
-    <div class="summary">
-      <h3>Summary</h3>
-      <table>
-        <%= for {file, percent} <- summary(coverage) do %>
-          <tr>
-            <td class="gutter"><%= format_percentage(percent) %></td>
-            <td class="content"><a href="#file-<%= file %>"><%= file %></a></td>
-          </tr>
-        <% end %>
-      </table>
-    </div>
+    <div class="container">
+      <nav>
+        <div class="summary-tree">
+          <h3>Summary (tree)</h3>
+          <%= render_tree(summary_file_tree(coverage)) %>
+        </div>
 
-    <div class="files">
-      <h3>Files</h3>
-      <%= for %{path: path, lines: lines} <- coverage do %>
-        <section id="file-<%= path %>">
-          <h4><a href="#file-<%= path %>"><%= path %></a></h4>
-          <table class="file">
-            <%= for {content, hits} <- lines_with_hits(path, lines) do %>
-              <tr class="<%= line_class(hits) %>">
-                <td class="gutter"><%= hits %></td>
-                <td class="content"><%= content %></td>
+        <div class="summary-list">
+          <h3>Summary (list)</h3>
+          <table>
+            <%= for {file, percent} <- summary_file_list(coverage) do %>
+              <tr class="p<%= p(percent) %>">
+                <td class="gutter"><%= format_percentage(percent) %></td>
+                <td class="content"><a href="#file-<%= file %>"><%= file %></a></td>
               </tr>
             <% end %>
           </table>
-        </section>
-      <% end %>
+        </div>
+      </nav>
+
+      <main>
+        <div class="files">
+          <h3>Files</h3>
+          <%= for %{path: path, lines: lines} <- coverage do %>
+            <section id="file-<%= path %>">
+              <h4><a href="#file-<%= path %>"><%= path %></a></h4>
+              <table class="file">
+                <%= for {ln, content, hits} <- lines_with_hits(path, lines) do %>
+                  <tr class="<%= line_class(hits) %>">
+                    <td class="gutter"><%= ln %></td>
+                    <td class="content"><%= content %></td>
+                  </tr>
+                <% end %>
+              </table>
+            </section>
+          <% end %>
+        </div>
+      </main>
     </div>
   </body>
 </html>

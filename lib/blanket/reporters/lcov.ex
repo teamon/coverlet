@@ -1,4 +1,4 @@
-defmodule Blanket.Reporters.Lcov do
+defmodule Blanket.Reporters.LCOV do
   @moduledoc """
 
   ## References

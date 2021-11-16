@@ -1,16 +1,9 @@
 defmodule Blanket do
   @version Mix.Project.get().project[:version]
 
-  ## CONFIG
-
   def version, do: @version
 
-  ## COVERAGE TOOL IMPLEMENTATION
-
-  def start(compile_path, opts) do
-    Mix.shell().info("BLANKET compile_path: #{inspect(compile_path)}")
-    Mix.shell().info("BLANKET opts:: #{inspect(opts)}")
-
+  def start(compile_path, _opts) do
     _ = :cover.start()
 
     case :cover.compile_beam_directory(compile_path |> to_charlist) do
@@ -57,6 +50,7 @@ defmodule Blanket do
   defp report(coverage) do
     reporters = [
       Blanket.Reporters.HTML,
+      Blanket.Reporters.LCOV,
       Blanket.Reporters.Console
     ]
 

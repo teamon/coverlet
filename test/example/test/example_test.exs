@@ -6,5 +6,6 @@ defmodule ExampleTest do
     Example.Ninety.two()
     Example.Ninety.two()
     Example.Ninety.ninety()
+    Example.One1.x()
   end
 end
