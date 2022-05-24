@@ -4,64 +4,43 @@
     <meta charset="utf-8">
     <title>Coverlet Coverage Report</title>
     <style media="screen">
+      html {
+        height: 100%;
+      }
+
       body {
-        padding: 0 20px;
+        height: 100%;
         margin: 0;
+        padding: 0;
         font-family: Monaco, monospace;
         font-size: 12px;
       }
 
-      a, a:visited { color: #0000ee; }
-
-      nav {
-        position: fixed;
-        top: 15px;
-        left: 20px;
-        height: calc(100vh - 20px);
-        width: 480px;
-        padding-right: 20px;
-        border-right: 1px solid #ddd;
-        overflow: scroll;
-        background: #fff;
+      a, a:visited {
+        color: #0000ee;
       }
 
-      main {
-        padding-left: 520px;
+      .container {
+        position: relative;
       }
 
-      section {
-        padding-bottom: 20px;
-      }
-      h4 {
-        white-space: pre;
-        padding: 0;
-        margin: 0;
-      }
-      .file {
-        background: #f5f5f5;
-        margin: 10px 0;
-        border-collapse: collapse;
-      }
-      .file td {
-        white-space: pre;
-      }
-      .file .gutter {
-        opacity: 0.5;
-      }
       .gutter {
         text-align: right;
         border-right: 1px solid #ddd;
         width: 50px;
         padding-right: 10px;
       }
+
       .content {
-        width: 800px;
         padding-left: 10px;
       }
-      .ignore { color: #555; }
+
+      .ignore {
+        color: #555;
+      }
+
       .miss { background-color: #FF413633; }
       .hit { background-color: #2ECC4033; }
-
       .p0 { background-color: #FF413633; }
       .p1 { background-color: #EA4F3733; }
       .p2 { background-color: #D55D3833; }
@@ -74,47 +53,110 @@
       .p9 { background-color: #43BE3F33; }
       .p10 { background-color: #2ECC4033; }
 
-      .summary-list, .summary-tree { max-width: 600px; }
+      nav {
+        box-sizing: border-box;
+        background: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 500px;
+        height: 100%;
+        overflow: scroll;
+        padding: 20px;
+        border-right: 1px solid #ddd;
+      }
 
       .summary-tree ul {
         list-style-type: none;
         margin-left: 10px;
         padding-left: 10px;
       }
-      .summary-tree > ul {
+
+      .summary-tree>ul {
         margin-left: 0;
         padding-left: 0;
       }
+
       .summary-tree .gutter {
         margin-right: 10px;
       }
+
       .summary-tree .caret {
         cursor: pointer;
       }
+
       .caret::before {
         content: "\25B6";
         color: black;
         display: inline-block;
         margin-right: 6px;
       }
+
       .summary-tree a {
         margin-left: 13px;
       }
+
       .down .caret::before {
         transform: rotate(90deg);
       }
+
       .summary-tree ul.closed {
         display: none;
       }
-      .summary-tree > ul.closed {
+
+      .summary-tree>ul.closed {
         display: block;
       }
+
       .summary-tree .f {
         display: flex;
         margin: 1px 0;
         padding: 1px 0;
       }
 
+      main {
+        padding: 20px 20px 0 520px;
+      }
+
+      .file {
+        background: #f5f5f5;
+        margin: 10px 0;
+        border-collapse: collapse;
+      }
+
+      .file td {
+        white-space: pre;
+      }
+
+      .file .gutter {
+        opacity: 0.5;
+      }
+
+      h3,
+      h4 {
+        white-space: pre;
+        padding: 0;
+        margin: 0;
+      }
+
+      section {
+        display: none;
+        padding: 20px 0 0 0;
+      }
+
+      section:target {
+        display: block;
+      }
+
+      table {
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      table td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     </style>
     <script type="text/javascript">
       function toggle(el){
@@ -147,6 +189,7 @@
       <main>
         <div class="files">
           <h3>Files</h3>
+          <p>Select file from the list of the left</p>
           <%= for %{path: path, lines: lines} <- coverage do %>
             <section id="file-<%= path %>">
               <h4><a href="#file-<%= path %>"><%= path %></a></h4>
