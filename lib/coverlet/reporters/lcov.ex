@@ -8,16 +8,19 @@ defmodule Coverlet.Reporters.LCOV do
     File.mkdir_p("cover")
 
     File.open("cover/lcov.info", [:write], fn io ->
-      for {file, modules} <- coverage do
-        IO.binwrite(io, "SF:#{file}\n")
+      for %{path: path, lines: lines} <- coverage do
+        IO.binwrite(io, "TN:\n")
+        IO.binwrite(io, "SF:#{path}\n")
 
-        for %{module: _module, lines: [{_, _} | _] = lines} <- modules do
-          for {n, c} <- lines do
-            IO.binwrite(io, "DA:#{n},#{c}\n")
-          end
-
-          # IO.binwrite(io, "FN:#{n},#{module}\n")
+        for {n, c} <- lines do
+          IO.binwrite(io, ["DA:#{n},#{c}\n"])
         end
+
+        lf = Enum.count(lines)
+        lh = Enum.count(lines, fn {_, c} -> c > 0 end)
+
+        IO.binwrite(io, "LF:#{lf}\n")
+        IO.binwrite(io, "LH:#{lh}\n")
 
         IO.binwrite(io, "end_of_record\n")
       end
