@@ -19,18 +19,20 @@ defmodule Coverlet do
   end
 
   defp generate_coverage do
-    {:ok, cwd} = :file.get_cwd()
-    cwdlen = length(cwd) + 1
-
     Enum.reduce(:cover.modules(), %{}, fn module, files ->
-      source = module.module_info(:compile)[:source]
-      path = to_string(:lists.nthtail(cwdlen, source))
-      {:ok, analysis} = :cover.analyse(module, :calls, :line)
-      lines = lines(analysis)
+      source = to_string(module.module_info(:compile)[:source])
+      path = Path.relative_to_cwd(source)
 
-      case files[path] do
-        nil -> Map.put(files, path, lines)
-        list -> Map.put(files, path, list ++ lines)
+      if path != source do
+        {:ok, analysis} = :cover.analyse(module, :calls, :line)
+        lines = lines(analysis)
+
+        case files[path] do
+          nil -> Map.put(files, path, lines)
+          list -> Map.put(files, path, list ++ lines)
+        end
+      else
+        files
       end
     end)
     |> Enum.map(fn {path, lines} -> %{path: path, lines: lines} end)
