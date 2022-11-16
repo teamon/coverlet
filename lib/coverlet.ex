@@ -3,7 +3,7 @@ defmodule Coverlet do
 
   def version, do: @version
 
-  def start(compile_path, _opts) do
+  def start(compile_path, opts) do
     _ = :cover.start()
 
     case :cover.compile_beam_directory(compile_path |> to_charlist) do
@@ -14,7 +14,7 @@ defmodule Coverlet do
     fn ->
       Mix.shell().info("\nGenerating cover results ...\n")
       coverage = generate_coverage()
-      report(coverage)
+      report(coverage, opts)
     end
   end
 
@@ -49,15 +49,18 @@ defmodule Coverlet do
     |> Enum.reverse()
   end
 
-  defp report(coverage) do
-    reporters = [
-      Coverlet.Reporters.HTML,
-      Coverlet.Reporters.LCOV,
-      Coverlet.Reporters.Console
-    ]
+  @reporters [
+    html: Coverlet.Reporters.HTML,
+    lcov: Coverlet.Reporters.LCOV,
+    console: Coverlet.Reporters.Console
+  ]
+
+  defp report(coverage, opts) do
+    reporters = opts[:reporters] || [:html, :lcov, :console]
 
     for reporter <- reporters do
-      reporter.call(coverage)
+      mod = Keyword.fetch!(@reporters, reporter)
+      mod.call(coverage)
     end
   end
 end
